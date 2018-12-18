@@ -1,0 +1,532 @@
+---
+title: "EDA-Project"
+author: "Shimaa Elabd"
+date: "Dec 13 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+Explore Data analysis
+========================================================
+
+
+# Introduction
+
+Exploring this dataset about Red Wine Quality.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using in your analysis in this code
+# chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk. This
+# prevents the code from displaying in the knitted HTML output. You should set
+# echo=FALSE for all code chunks in your file, unless it makes sense for your
+# report to show the code that generated a particular plot.
+
+# The other parameters for "message" and "warning" should also be set to FALSE
+# for other code chunks once you have verified that each plot comes out as you
+# want it to. This will clean up the flow of your report.
+
+library(ggplot2)
+library(GGally)
+library(dplyr)
+library(gridExtra)
+```
+
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+
+red_wine <- read.csv("wineQualityReds.csv",  row.names = 1, stringsAsFactors = FALSE)
+red_wine$quality <- factor(red_wine$quality, ordered = TRUE)
+
+```
+
+
+The variables included in the Red Wine dataset:
+```{r echo=FALSE}
+# variables included in the Red Wine dataset
+names(red_wine)
+```
+And the variables are of type:
+
+```{r echo=FALSE}
+# type  of variables  
+str(red_wine)
+```
+
+
+
+
+The summary statistics for residual sugar:
+
+
+```{r echo=FALSE}
+# summary table for residual.sugar
+
+summary(red_wine$residual.sugar)
+```
+
+The summary statistics for chlorides:
+```{r echo=FALSE}
+# summary table for chlorides
+
+summary(red_wine$chlorides)
+```
+
+
+
+# Univariate Plots Section
+
+
+```{r echo=FALSE, Univariate_Plots}
+# Show glimpse about the dataset
+glimpse(red_wine)
+
+```
+
+## Quality
+
+```{r echo=FALSE, Quality}
+
+# Plotting Qulaity variable
+summary(red_wine$quality)
+ggplot(data = red_wine, aes(x = quality))+
+  geom_bar()
+
+```
+
+
+We can conclude that the quality variable is normally distributed.
+The most of red wines have a quality ranking of 5 and 6.
+
+
+
+## Alcohol
+
+```{r echo=FALSE, alcohol}
+
+# Plotting Alcohol variable by histogram
+summary(red_wine$alcohol)
+ggplot(aes(x=alcohol), data=red_wine) +
+geom_histogram(bins=30, color='white')
+
+```
+
+
+
+Alcohol is right skewed and have a Median = 10.20  and Mean = 10.42
+
+
+## pH
+
+```{r echo=FALSE, pH}
+
+# Plotting PH variable by histogram
+summary(red_wine$pH)
+ggplot(aes(x=pH), data=red_wine) +
+geom_histogram(bins=30, color='white')
+
+
+```
+
+
+
+We can conclude that the PH variable is normally distributed.
+Most of red wines have a pH between 3.21 and 3.4
+
+
+## Volatile acidity
+
+```{r echo=FALSE, volatile.acidity}
+
+# Plotting volatile.acidity variable by histogram
+summary(red_wine$volatile.acidity)
+ggplot(aes(x=volatile.acidity), data=red_wine) +
+geom_histogram(bins=30, color='white')
+```
+
+
+
+The distribution of volatile acidity is non-symmetric and bimodal with two peaks at 0.4 and 0.6.
+
+## Citric acid
+
+```{r echo=FALSE, Citric.acid}
+
+# Plotting Citric.acid variable by histogram
+summary(red_wine$citric.acid)
+ggplot(aes(x=citric.acid), data=red_wine) +
+geom_histogram(bins=30, color='white')
+
+```
+
+
+
+The distribution of Citric.acid is non-symmetric and Multimodal with more than one peak.
+
+
+
+## Fixed Acidity
+
+```{r echo=FALSE, Fixed_Acidity}
+
+# Plotting Fixed Acidity variable by histogram
+summary(red_wine$fixed.acidity)
+ggplot(aes(x=fixed.acidity), data=red_wine) +
+geom_histogram(bins=30, color='white')
+```
+
+
+We can conclude that the Fixed Acidity variable is normally distributed.
+Most of red wines have a Fixed Acidity between 7.1 and 9.2
+
+
+
+## Free sulfur dioxide
+
+```{r echo=FALSE, Free.sulfur.dioxide}
+
+# Plotting Free sulfur dioxide variable by histogram
+summary(red_wine$free.sulfur.dioxide)
+ggplot(aes(x=free.sulfur.dioxide), data=red_wine) +
+geom_histogram(bins=30, color='white')
+```
+
+
+Free sulfur dioxide is right skewed and have a Median = 14  and Mean = 15.87
+
+
+# Univariate Analysis
+
+
+### What is the structure of your dataset?
+The dataset has 12 variables and 1599 observations.
+
+
+### What is/are the main feature(s) of interest in your dataset?
+Quality 
+
+### What other features in the dataset do you think will help support your \
+investigation into your feature(s) of interest?
+
+The percentage of Alcohol and volatile acidity and The pH
+
+
+### Did you create any new variables from existing variables in the dataset?
+
+No
+
+### Of the features you investigated, were there any unusual distributions? \
+Did you perform any operations on the data to tidy, adjust, or change the form \
+of the data? If so, why did you do this?
+
+There were no unusual distributions, so i didn't perform any operations on the data As this dataset is already tidy.
+
+
+# Bivariate Plots Section
+
+
+## Fixed Acidity And Quality
+
+
+
+```{r echo=FALSE}
+
+# Plotting the two variables Fixed Acidity And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~fixed.acidity))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+Quality rates 3 and 8 have low observations than the middle ones 5 and 6.
+
+
+## volatile Acidity And Quality
+
+```{r echo=FALSE}
+
+# Plotting the two variables volatile Acidity And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~volatile.acidity))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+Quality rates 3 and 8 are extreme cases which have low observations than the middle ones 5 and 6.
+
+But we can roughly conclude that lower volatile acidity ascocited with higher wine quality.
+
+
+
+## pH And Quality
+
+```{r echo=FALSE}
+
+# Plotting the two variables PH And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~pH))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+We can also conclude that lower PH ascocited with higher wine quality.
+
+
+## Alcohol And Quality
+
+```{r echo=FALSE}
+
+# Plotting the two variables Alcohol And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~alcohol))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+
+We can also conclude that higher the alcohol content ascocited with higher wine quality.
+
+
+## Free sulfur dioxide And Quality
+
+```{r echo=FALSE}
+
+# Plotting the two variables Free sulfur dioxide And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~free.sulfur.dioxide ))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+Quality rates 3 and 8 have low observations than the middle ones 5 and 6.
+The middle quality classes 5, 6 seem to have higher free sulfur dioxide than others.
+
+
+
+## Citric acid And Quality
+
+```{r echo=FALSE}
+
+
+# Plotting the two variables Citric acid And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~citric.acid ))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))
+
+```
+
+
+
+Quality rates 3 has the least observations other than the middle ones 5 and 6.
+The middle quality classes 5, 6 seem to have higher citric.acid than others.
+
+
+# Bivariate Analysis
+Will Visualize the relationship between each pair of variables and find their correlations. 
+
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. How did the feature(s) of interest vary with other features in \
+the dataset?
+
+
+The wine quality is higher has stronger relationship with the volatile acidity and alcohol content. The correlation coefficients show the relationship with the variables.
+
+```{r echo=FALSE}
+cor(x = red_wine[1:11],
+    y = as.numeric(red_wine$quality),
+    method = "spearman")
+```
+
+
+### What was the strongest relationship you found?
+The relationship between the quality and the alcohol content.
+
+
+# Multivariate Plots Section
+
+
+
+## Alcohol And Volatile acidity And quality
+
+
+```{r echo=FALSE, Multivariate_Plots}
+
+# Plotting the three variables Alcohol And Volatile acidity And quality
+  ggplot(red_wine, aes_q(x = ~ alcohol, y = ~ volatile.acidity, color = ~ quality))+
+    geom_point(alpha = 0.8, size = 2)+
+    scale_color_brewer(type = "div", palette = "RdYlGn")
+
+```
+
+We can conclude that the lower quality wines associated with the lower alcohol and higher volatile acidity. 
+
+
+
+## Citric acid And Alcohol And Quality
+
+```{r echo=FALSE, Multivariate_Plots2}
+
+# Plotting the three variables  Citric acid And Alcohol And Quality
+  ggplot(red_wine, aes_q(x = ~ alcohol, y = ~ citric.acid, color = ~ quality))+
+    geom_point(alpha = 0.8, size = 2)+
+    scale_color_brewer(type = "div", palette = "RdYlGn")
+```
+
+We can conclude that the higher quality wines associated with the higher citric acid and alcohol.
+
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. Were there features that strengthened each other in terms of \
+looking at your feature(s) of interest?
+
+
+The relationship between alcohol and volatile acidity and their relation with quality. Higher alcohol and lower acidity give in general better quality wines.
+Also the higher quality wines associated related to  the higher citric acid and alcohol.
+
+
+# Final Plots and Summary
+
+
+### Plot One
+```{r echo=FALSE}
+
+# Plotting the two variables volatile Acidity And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~volatile.acidity))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))+
+    xlab("Quality")+
+    ylab(expression(Volatile~Acidity~(g/dm^{3})))+
+    ggtitle("Lower volatile acidity gives Higher wine quality")
+
+```
+
+### Description One
+
+We can conclude that lower volatile acidity ascocited with higher wine quality.
+The boxplot shows the quantile boundaries and median values, while the dots shows us the actual distribution of wines. The red line connects the median values and helps us grasp visually the decreasing trend of volatile acidity with quality. Wines with lower volatile acidity content are rated higher in quality.
+
+
+### Plot Two
+```{r echo=FALSE}
+
+# Plotting the two variables Alcohol And Quality by box plots 
+# and including the mean in the plot. 
+  ggplot(data = red_wine, aes_q(x = ~quality, y = ~alcohol))+
+    geom_boxplot()+
+    geom_jitter(width = 0.25, alpha = 1/10)+
+    geom_point(stat = "summary",
+                  fun.y = mean,
+                  aes(fill = "mean"),
+                  size = 4,
+                  alpha = 0.8,
+               shape = 24) +
+    scale_fill_manual('', values = c("mean"="red"))+
+    xlab("Quality")+
+    ylab("Alcohol (% by Volume)")+
+    ggtitle("Higher Alcohol content gives Higher wine quality.")
+
+
+```
+
+### Description Two
+
+From the quality rating 5 to 8, There's a big increase in the alcohol content. So we can conclude that Wines with higher alcohol content are rated highe quality.
+
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+
+# Plotting the three variables Alcohol And Volatile acidity And quality
+  ggplot(red_wine, aes_q(x = ~ alcohol, y = ~ volatile.acidity, color = ~ quality))+
+    geom_point(alpha = 0.8, size = 2)+
+    scale_color_brewer(type = "div", palette = "RdYlGn")+
+    xlab("Alcohol (% by Volume)")+
+    ylab(expression(Volatile~Acidity~(g/dm^{3})))+
+    ggtitle("lower quality wines associated with the lower alcohol and higher volatile acidity")
+
+```
+
+### Description Three
+
+W e can conclude that Alcohol and volatile acidity had a big impact on the quality of the wines. On this plot we see the combined effect of this two variables on the quality. The wines with high volatile acidity and low alcohol have lower quality rating.And at low volatile acidity and high alcohol content we find the higher quality wines.
+
+
+# Reflection
+
+This is my first project in R so it's a great challenge for me. And making visualization for more than two variables it became harder to grasp conclusions.
+
+When working with such a dataset the first challenge is to choosw which variable to explore and find it's relation with other variables but luckily, the dataset already hints at some variables of interest.it tells us that citric acid can add freshness to wines, while acetic acid can add an unpleasant vinegar taste. This shows how important it is to have specific domain knowledge while performing a data analysis.and  When we do not have that domain knowledge, consulting with an expert in the field will be incredibly valuable to save time.
+
+My Second challenge was making visualization for more than two variables as it became harder to grasp conclusions but it came up with good results thogh.
+
+As Fusture work in this project, I could think of Use also the white wines dataset to see if we can come up with the same conclusions or it wil be different.
+
+And further more As a next step I want to develop a machine learning model to predict red wine quality based on the data in this dataset.
